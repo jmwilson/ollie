@@ -71,6 +71,8 @@ measurement_commands = {
     "minimum": "VMIN",
     "peak to peak": "VPP",
     "top": "VTOP",
+    "pulse width": "PWIDth",
+    "negative pulse width": "NWIDth",
 }
 
 trigger_sources = {
