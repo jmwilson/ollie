@@ -3,10 +3,10 @@ Voice control for Keysight 1000-X oscilloscopes using snips.ai
 
 Ollie is a voice control assistant for Keysight 1000-X oscilloscopes. Using your voice, you can control the oscilloscope to do:
 
-- run/stop/single capture
-- show/hide channels
-- adjust vertical/horizontal scale
-- add and clear measurements:
+- run/stop/single capture: "run", "stop", "single"
+- show/hide channels: "show channel two", "hide the external trigger", "show reference one"
+- adjust vertical/horizontal scale: "set the time base to 100 nanoseconds", "set channel one vertical scale to 2 volts"
+- add and clear measurements: "show me the frequency for channel one"
     - duty cycle
     - rise/fall time
     - pre/overshoot
@@ -14,8 +14,10 @@ Ollie is a voice control assistant for Keysight 1000-X oscilloscopes. Using your
     - frequency
     - period
     - amplitude/average/min/max/base/top/P-P voltage
-- set trigger source and slope
-- save screen captures to a USB drive
+- set trigger source and slope: "trigger on the external trigger", "trigger on the falling edge"
+- save screen captures to a USB drive: "take a screen shot"
+
+(full command training set is viewable on the snips console link below)
 
 Hardware used:
 - Raspberry Pi model 3A+
