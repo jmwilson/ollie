@@ -1,0 +1,18 @@
+Source: ollie
+Section: misc
+Priority: optional
+Maintainer: James Wilson <jmw@jmw.name>
+Build-Depends: debhelper (>= 9), dh-systemd, dh-python, python3-all, python3-setuptools
+Standards-Version: 4.1.2
+Homepage: https://github.com/jmwilson/ollie
+X-Python3-Version: >= 3.2
+Vcs-Git: https://github.com/jmwilson/ollie.git
+Vcs-Browser: https://github.com/jmwilson/ollie
+
+Package: ollie
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends}, adduser
+Recommends: ollie-assistant
+Description: Voice control for Keysight 1000-X oscilloscopes using Snips
+ .
+ This package installs the library for Python 3.
