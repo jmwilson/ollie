@@ -5,7 +5,6 @@ with open("README.md", "r") as fd:
 
 setuptools.setup(
     name="ollie-assistant",
-    version="1.0.0",
     packages=setuptools.find_packages(),
     description="A Snips-based voice assistant for oscilloscopes",
     long_description=long_description,
@@ -13,8 +12,6 @@ setuptools.setup(
     url="https://github.com/jwmilson/ollie",
     install_requires=[
         "paho-mqtt",
-        "python-usbtmc",
-        "pyusb",
         "spidev",
     ],
     entry_points={

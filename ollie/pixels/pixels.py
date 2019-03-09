@@ -2,13 +2,11 @@
 LED light pattern like Google Home
 """
 
-from . import apa102
 import time
 import threading
-try:
-    import queue as Queue
-except ImportError:
-    import Queue as Queue
+import queue
+
+from . import apa102
 
 
 class Pixels:
@@ -25,7 +23,7 @@ class Pixels:
         self.dev = apa102.APA102(num_led=self.PIXELS_N)
 
         self.next = threading.Event()
-        self.queue = Queue.Queue()
+        self.queue = queue.Queue()
         self.thread = threading.Thread(target=self._run)
         self.thread.daemon = True
         self.thread.start()
@@ -52,6 +50,14 @@ class Pixels:
     def off(self):
         self.next.set()
         self.queue.put(self._off)
+
+    def startup(self):
+        self.next.set()
+        self.queue.put(self._startup)
+
+    def error(self):
+        self.next.set()
+        self.write([50, 0, 0] * self.PIXELS_N)
 
     def _run(self):
         while True:
@@ -119,6 +125,12 @@ class Pixels:
 
     def _off(self):
         self.write([0] * 3 * self.PIXELS_N)
+
+    def _startup(self):
+        for i in range(50, 0, -1):
+            self.write([0, i, 0] * self.PIXELS_N)
+            time.sleep(0.02)
+        self._off()
 
     def write(self, colors):
         for i in range(self.PIXELS_N):

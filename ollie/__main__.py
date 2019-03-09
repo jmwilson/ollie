@@ -18,10 +18,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import json
 import paho.mqtt.client as mqtt
+import signal
 import sys
+import traceback
 
 from .pixels import pixels
-from . import keysight1000x
+from . import keysight
 
 def on_message(client, userdata, msg):
     try:
@@ -44,38 +46,49 @@ def on_message(client, userdata, msg):
                            payload=json.dumps(dict(sessionId=payload["sessionId"])))
 
         if topic == "hermes/intent/jmwilson:runCapture":
-            keysight1000x.onRunCapture(client, userdata, payload)
+            keysight.onRunCapture(client, userdata, payload)
         if topic == "hermes/intent/jmwilson:stopCapture":
-            keysight1000x.onStopCapture(client, userdata, payload)
+            keysight.onStopCapture(client, userdata, payload)
         if topic == "hermes/intent/jmwilson:singleCapture":
-            keysight1000x.onSingleCapture(client, userdata, payload)
+            keysight.onSingleCapture(client, userdata, payload)
         if topic == "hermes/intent/jmwilson:showChannel":
-            keysight1000x.onShowChannel(client, userdata, payload)
+            keysight.onShowChannel(client, userdata, payload)
         if topic == "hermes/intent/jmwilson:hideChannel":
-            keysight1000x.onHideChannel(client, userdata, payload)
+            keysight.onHideChannel(client, userdata, payload)
         if topic == "hermes/intent/jmwilson:setTimeBaseScale":
-            keysight1000x.onSetTimebaseScale(client, userdata, payload)
+            keysight.onSetTimebaseScale(client, userdata, payload)
         if topic == "hermes/intent/jmwilson:setTimebaseReference":
-            keysight1000x.onSetTimebaseReference(client, userdata, payload)
+            keysight.onSetTimebaseReference(client, userdata, payload)
         if topic == "hermes/intent/jmwilson:setChannelVerticalScale":
-            keysight1000x.onSetChannelVerticalScale(client, userdata, payload)
+            keysight.onSetChannelVerticalScale(client, userdata, payload)
         if topic == "hermes/intent/jmwilson:measure":
-            keysight1000x.onMeasure(client, userdata, payload)
+            keysight.onMeasure(client, userdata, payload)
         if topic == "hermes/intent/jmwilson:clearAllMeasurements":
-            keysight1000x.onClearAllMeasurements(client, userdata, payload)
+            keysight.onClearAllMeasurements(client, userdata, payload)
         if topic == "hermes/intent/jmwilson:setTriggerSource":
-            keysight1000x.onSetTriggerSource(client, userdata, payload)
+            keysight.onSetTriggerSource(client, userdata, payload)
         if topic == "hermes/intent/jmwilson:setTriggerSlope":
-            keysight1000x.onSetTriggerSlope(client, userdata, payload)
+            keysight.onSetTriggerSlope(client, userdata, payload)
         if topic == "hermes/intent/jmwilson:saveImage":
-            keysight1000x.onSaveImage(client, userdata, payload)
-    except Exception as e:
-        print("{}: {}".format(e.__class__.__name__, e), file=sys.stderr)
+            keysight.onSaveImage(client, userdata, payload)
+        if topic == "hermes/intent/jmwilson:setProbeCoupling":
+            keysight.onSetProbeCoupling(client, userdata, payload)
+        if topic == "hermes/intent/jmwilson:setProbeAttenuation":
+            keysight.onSetProbeAttenuation(client, userdata, payload)
+    except Exception:
+        print(traceback.format_exc(), file=sys.stderr)
         raise
 
 
 def main():
-    client = mqtt.Client()
+    try:
+        # Open with line buffering because usbtmc is similar to a tty
+        dev = open("/dev/usbtmc0", mode="r+", buffering=1)
+    except FileNotFoundError:
+        pixels.error()
+        sys.exit(1)
+
+    client = mqtt.Client(userdata=dev)
     client.on_message = on_message
 
     client.connect("localhost")
@@ -83,6 +96,15 @@ def main():
     client.subscribe("hermes/dialogueManager/sessionStarted")
     client.subscribe("hermes/dialogueManager/sessionEnded")
     client.subscribe("hermes/asr/textCaptured")
+
+    def handler(signal, frame):
+        # catch SIGHUP thrown by udev remove rule to show error condition
+        pixels.error()
+        client.disconnect()
+        sys.exit(1)
+    signal.signal(signal.SIGHUP, handler)
+
+    pixels.startup()
     client.loop_forever()
 
 
