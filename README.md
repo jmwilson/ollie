@@ -19,15 +19,26 @@ Ollie is a voice control assistant for Keysight 1000-X oscilloscopes. Frequently
 
 (full command training set is viewable on the snips console link below)
 
-Hardware used:
-- Raspberry Pi model 3A+
-- Respeaker 2 Pi Hat
+## Getting started
 
-Installation steps:
+Things you'll need:
+- Raspberry Pi model 3A+ or 3B+
+- Respeaker 2 Pi Hat
+- microSD card (4 GB)
+
+Pre-made images are available for the Raspberry Pi. These images include a base Raspbian lite image, with all drivers, Snips, and the Ollie assistant installed. Connect the Pi to a 1000-X scope and it's ready to go! The image is generated using a fork of pi-gen (https://github.com/jmwilson/pi-gen-ollie).
+
+[Download the latest image](https://s3-us-west-2.amazonaws.com/ollie-dist/image_2019-03-03-Ollie.zip) (SHA-256: `bf62bf9573faf78f03fa1b4a3629e29d8bf5ad1fa4b429c926e1693ba55b3a59`)
+
+[Instructions for flashing a Raspbian image](https://www.raspberrypi.org/documentation/installation/installing-images/)
+
+This image does not have Wifi or SSH enabled. To enable network and remote access, it is necessary to connect a monitor and keyboard and login through the console. The default username/password is `pi/raspberry`; it is recommended to change this if you are enabling ssh. 
+
+Manual installation steps:
 1. Install Raspbian lite
 2. Install Seeedstudio drivers for the Respeaker 2: http://wiki.seeedstudio.com/ReSpeaker_2_Mics_Pi_HAT/
 3. Install Snips for Raspberry Pi: https://docs.snips.ai/articles/raspberrypi/manual-setup
-4. Unzip the assistant `.zip` file under `/usr/local/share/snips`, or create your own assistant using the Oscilloscope Control app on the snips.ai console: https://console.snips.ai/store/en/skill_E3eq8QB0Ae
+4. Create an assistant on the Snips console that uses the Oscilloscope control app: https://console.snips.ai/store/en/skill_E3eq8QB0Ae. Train the assistant and download the .zip image, and expand it under `/usr/share/snips`. 
 5. Install the ollie code on the Raspberry Pi, and run using `python <path-to-ollie>`
 
 Video demo:
