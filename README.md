@@ -1,7 +1,7 @@
 # ollie
-Voice control for Keysight 1000-X oscilloscopes using Snips
+Voice control for Keysight oscilloscopes using Snips
 
-Ollie is a voice control assistant for Keysight 1000-X oscilloscopes. Frequently I would be probing a board with both hands and wished I could just yell at the scope to pause the capture. Keysight does offer voice control for its oscilloscopes — starting on the 6000 series. For those of us on a more modest budget, a Raspberry Pi and the [Snips](https://snips.ai) platform can be an excellent substitute. Using your voice, you can control the oscilloscope to do:
+Ollie is a voice control assistant for Keysight 1000-6000 oscilloscopes. Frequently I would be probing a board with both hands and wished I could just yell at the scope to pause the capture. Keysight does offer voice control for its oscilloscopes — starting on the 6000 series. For those of us on a more modest budget, a Raspberry Pi and the [Snips](https://snips.ai) platform can be an excellent substitute. Using your voice, you can control the oscilloscope to do:
 
 - run/stop/single capture: "run", "stop", "single"
 - show/hide channels: "show channel two", "hide the external trigger", "show reference one"
@@ -14,8 +14,9 @@ Ollie is a voice control assistant for Keysight 1000-X oscilloscopes. Frequently
     - frequency
     - period
     - amplitude/average/min/max/base/top/P-P voltage
-- set trigger source and slope: "trigger on the external trigger", "trigger on the falling edge"
+- set trigger source and slope: "set trigger source to external", "trigger on the falling edge", "set trigger slope to negative"
 - save screen captures to a USB drive: "take a screen shot"
+- change probe attenuation ratio and coupling: "set probe one ratio to 100", "set probe two coupling to AC"
 
 (full command training set is viewable on the snips console link below)
 
@@ -26,13 +27,15 @@ Things you'll need:
 - Respeaker 2 Pi Hat
 - microSD card (4 GB)
 
-Pre-made images are available for the Raspberry Pi. These images include a base Raspbian lite image, with all drivers, Snips, and the Ollie assistant installed. Connect the Pi to a 1000-X scope and it's ready to go! The image is generated using a fork of pi-gen (https://github.com/jmwilson/pi-gen-ollie).
+Ready-to-use images are available for the Raspberry Pi. These images include a base Raspbian lite installation, with all drivers, Snips, and the Ollie assistant installed. The image is generated using a fork of pi-gen (https://github.com/jmwilson/pi-gen-ollie).
 
-[Download the latest image](https://s3-us-west-2.amazonaws.com/ollie-dist/image_2019-03-03-Ollie.zip) (SHA-256: `bf62bf9573faf78f03fa1b4a3629e29d8bf5ad1fa4b429c926e1693ba55b3a59`)
+[Download the latest image](https://s3-us-west-2.amazonaws.com/ollie-dist/image_2019-03-09-Ollie.zip) (SHA-256: `a77a186d1a6a98c65c3e2db12c40e22e7f30f6df21040e0b2107abfa80311b6d`)
 
 [Instructions for flashing a Raspbian image](https://www.raspberrypi.org/documentation/installation/installing-images/)
 
-This image does not have Wifi or SSH enabled. To enable network and remote access, it is necessary to connect a monitor and keyboard and login through the console. The default username/password is `pi/raspberry`; it is recommended to change this if you are enabling ssh. 
+This image does not have Wi-fi or SSH enabled. To enable network and remote access, it is necessary to connect a monitor and keyboard and login through the console to run `sudo raspi-config`. The default username/password is `pi/raspberry`; it is recommended to change this if you enable remote access.
+
+Once the image is installed, connect the Pi to the rear USB port on the oscilloscope. The LEDs on the Respeaker hat will briefly flash green when the Pi is connected to a valid device. The LEDs turn red when the Pi is disconnected from an oscilloscope. To make a voice command, get Ollie's attention by saying "Hey Snips", followed by a command (for example, "Hey Snips, single" or "Hey Snips, what's the frequency on channel one?").
 
 Manual installation steps:
 1. Install Raspbian lite
