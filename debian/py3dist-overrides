@@ -1,1 +1,2 @@
 spidev python3-spidev
+paho_mqtt python3-paho-mqtt
