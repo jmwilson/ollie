@@ -29,7 +29,7 @@ Things you'll need:
 
 Ready-to-use images are available for the Raspberry Pi. These images include a base Raspbian lite installation, with all drivers, Snips, and the Ollie assistant installed. The image is generated using a fork of pi-gen (https://github.com/jmwilson/pi-gen-ollie).
 
-[Download the latest image](https://s3-us-west-2.amazonaws.com/ollie-dist/image_2019-03-09-Ollie.zip) (SHA-256: `a77a186d1a6a98c65c3e2db12c40e22e7f30f6df21040e0b2107abfa80311b6d`)
+[Download the latest image](https://s3-us-west-2.amazonaws.com/ollie-dist/image_2019-03-11-Ollie.zip) (SHA-256: `19bd0ebb3c4885eef3436ed2187f81d6f504f101ef3a5fdfb5878615656a231e`)
 
 [Instructions for flashing a Raspbian image](https://www.raspberrypi.org/documentation/installation/installing-images/)
 
