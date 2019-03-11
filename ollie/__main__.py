@@ -85,6 +85,13 @@ def main():
         # Open with line buffering because usbtmc is similar to a tty
         dev = open("/dev/usbtmc0", mode="r+", buffering=1)
     except FileNotFoundError:
+        # If /dev/usbtmc0 is not there, assume some race condition with
+        # device disconnect and service restarts. exit(0) will stop retries.
+        pixels.error()
+        sys.exit(0)
+    except OSError:
+        # For other errors, exit(1) + Restart=on-failure in the systemd unit
+        # file will force retrying.
         pixels.error()
         sys.exit(1)
 
@@ -98,10 +105,12 @@ def main():
     client.subscribe("hermes/asr/textCaptured")
 
     def handler(signal, frame):
-        # catch SIGHUP thrown by udev remove rule to show error condition
+        # Catch SIGHUP thrown by udev remove rule to show error condition
+        # and stop the service.
         pixels.error()
         client.disconnect()
-        sys.exit(1)
+        dev.close()
+        sys.exit(0)
     signal.signal(signal.SIGHUP, handler)
 
     pixels.startup()
