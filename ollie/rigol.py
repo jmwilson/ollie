@@ -22,29 +22,48 @@ measurement_sources = {
     "channel two": "CHANNEL2",
     "channel three": "CHANNEL3",
     "channel four": "CHANNEL4",
-    "digital zero": "DIGITAL0",
-    "digital one": "DIGITAL1",
-    "digital two": "DIGITAL2",
-    "digital three": "DIGITAL3",
-    "digital four": "DIGITAL4",
-    "digital five": "DIGITAL5",
-    "digital six": "DIGITAL6",
-    "digital seven": "DIGITAL7",
-    "digital eight": "DIGITAL8",
-    "digital nine": "DIGITAL9",
-    "digital ten": "DIGITAL10",
-    "digital eleven": "DIGITAL11",
-    "digital twelve": "DIGITAL12",
-    "digital thirteen": "DIGITAL13",
-    "digital fourteen": "DIGITAL14",
-    "digital fifteen": "DIGITAL15",
-    "function": "FUNCTION",
-    "reference one": "WMEMORY1",
-    "reference two": "WMEMORY2",
-    "external": "EXTERNAL",
+    "digital zero": "D0",
+    "digital one": "D1",
+    "digital two": "D2",
+    "digital three": "D3",
+    "digital four": "D4",
+    "digital five": "D5",
+    "digital six": "D6",
+    "digital seven": "D7",
+    "digital eight": "D8",
+    "digital nine": "D9",
+    "digital ten": "D10",
+    "digital eleven": "D11",
+    "digital twelve": "D12",
+    "digital thirteen": "D13",
+    "digital fourteen": "D14",
+    "digital fifteen": "D15",
+    "function": "MATH",
 }
 
-display_sources = measurement_sources
+display_sources = {
+    "channel one": "CHANNEL1",
+    "channel two": "CHANNEL2",
+    "channel three": "CHANNEL3",
+    "channel four": "CHANNEL4",
+    "digital zero": "LA:DIGITAL0",
+    "digital one": "LA:DIGITAL1",
+    "digital two": "LA:DIGITAL2",
+    "digital three": "LA:DIGITAL3",
+    "digital four": "LA:DIGITAL4",
+    "digital five": "LA:DIGITAL5",
+    "digital six": "LA:DIGITAL6",
+    "digital seven": "LA:DIGITAL7",
+    "digital eight": "LA:DIGITAL8",
+    "digital nine": "LA:DIGITAL9",
+    "digital ten": "LA:DIGITAL10",
+    "digital eleven": "LA:DIGITAL11",
+    "digital twelve": "LA:DIGITAL12",
+    "digital thirteen": "LA:DIGITAL13",
+    "digital fourteen": "LA:DIGITAL14",
+    "digital fifteen": "LA:DIGITAL15",
+    "function": "MATH",
+}
 
 time_units = {
     "seconds": 1.,
@@ -60,22 +79,16 @@ vertical_units = {
     "milliamps": ("current", 1e-3),
 }
 
-timebase_references = {
-    "left": "LEFT",
-    "center": "CENTER",
-    "right": "RIGHT",
-}
-
 measurement_commands = {
-    "duty cycle": "DUTYCYCLE",
-    "fall time": "FALLTIME",
+    "duty cycle": "PDUTY",
+    "fall time": "FTIME",
     "frequency": "FREQUENCY",
     "overshoot": "OVERSHOOT",
     "period": "PERIOD",
     "preshoot": "PRESHOOT",
-    "rise time": "RISETIME",
-    "amplitude": "VAMPLITUDE",
-    "average": "VAVERAGE",
+    "rise time": "RTIME",
+    "amplitude": "VAMP",
+    "average": "VAVG",
     "base": "VBASE",
     "maximum": "VMAX",
     "minimum": "VMIN",
@@ -90,32 +103,29 @@ trigger_sources = {
     "channel two": "CHANNEL2",
     "channel three": "CHANNEL3",
     "channel four": "CHANNEL4",
-    "digital zero": "DIGITAL0",
-    "digital one": "DIGITAL1",
-    "digital two": "DIGITAL2",
-    "digital three": "DIGITAL3",
-    "digital four": "DIGITAL4",
-    "digital five": "DIGITAL5",
-    "digital six": "DIGITAL6",
-    "digital seven": "DIGITAL7",
-    "digital eight": "DIGITAL8",
-    "digital nine": "DIGITAL9",
-    "digital ten": "DIGITAL10",
-    "digital eleven": "DIGITAL11",
-    "digital twelve": "DIGITAL12",
-    "digital thirteen": "DIGITAL13",
-    "digital fourteen": "DIGITAL14",
-    "digital fifteen": "DIGITAL15",
-    "external": "EXTERNAL",
-    "line": "LINE",
-    "generator": "WGEN",
+    "digital zero": "D0",
+    "digital one": "D1",
+    "digital two": "D2",
+    "digital three": "D3",
+    "digital four": "D4",
+    "digital five": "D5",
+    "digital six": "D6",
+    "digital seven": "D7",
+    "digital eight": "D8",
+    "digital nine": "D9",
+    "digital ten": "D10",
+    "digital eleven": "D11",
+    "digital twelve": "D12",
+    "digital thirteen": "D13",
+    "digital fourteen": "D14",
+    "digital fifteen": "D15",
+    "line": "AC",
 }
 
 trigger_slopes = {
     "negative": "NEGATIVE",
     "positive": "POSITIVE",
-    "either": "EITHER",
-    "alternate": "ALTERNATE",
+    "either": "RFAL",
 }
 
 
@@ -170,8 +180,14 @@ def onSetTimebaseScale(client, device, payload):
 def onSetTimebaseReference(client, device, payload):
     expectSlots(payload, 1)
     value = payload['slots'][0]['value']['value']
-    ref = timebase_references[value]
-    print(":TIMEBASE:REFERENCE {ref}".format(ref=ref), file=device)
+    print(":TIMEBASE:SCALE?", file=device)
+    scale = float(device.readline())
+    if value == "left":
+        print(":TIMEBASE:OFFSET {offset:G}".format(offset=4 * scale), file=device)
+    if value == "center":
+        print(":TIMEBASE:OFFSET 0", file=device)
+    if value == "right":
+        print(":TIMEBASE:OFFSET {offset:G}".format(offset=-4 * scale), file=device)
 
 
 def onSetChannelVerticalScale(client, device, payload):
@@ -184,7 +200,7 @@ def onSetChannelVerticalScale(client, device, payload):
         if slot['slotName'] == "units":
             unit_type, exp = vertical_units[slot['value']['value']]
     if unit_type == "voltage":
-        print(":CHANNEL{n}:UNITS VOLT".format(n=channel), file=device)
+        print(":CHANNEL{n}:UNITS VOLTAGE".format(n=channel), file=device)
     else:
         print(":CHANNEL{n}:UNITS AMPERE".format(n=channel), file=device)
     print(":CHANNEL{n}:SCALE {scale:G}".format(n=channel, scale=scale * exp), file=device)
@@ -197,30 +213,30 @@ def onMeasure(client, device, payload):
             subcommand = measurement_commands[slot['value']['value']]
         if slot['slotName'] == "source":
             source = measurement_sources[slot['value']['value']]
-    print(":MEASURE:{cmd} {source}".format(cmd=subcommand, source=source), file=device)
+    print(":MEASURE:ITEM {cmd},{source}".format(cmd=subcommand, source=source), file=device)
 
 
 def onClearAllMeasurements(client, device, payload):
-    print(":MEASURE:CLEAR", file=device)
+    print(":MEASURE:CLEAR ALL", file=device)
 
 
 def onSetTriggerSlope(client, device, payload):
     expectSlots(payload, 1)
     value = payload['slots'][0]['value']['value']
     slope = trigger_slopes[value]
-    print(":TRIGGER:SLOPE {slope}".format(slope=slope), file=device)
+    print(":TRIGGER:EDGE:SLOPE {slope}".format(slope=slope), file=device)
 
 
 def onSetTriggerSource(client, device, payload):
     expectSlots(payload, 1)
     value = payload['slots'][0]['value']['value']
     source = trigger_sources[value]
-    print(":TRIGGER:SOURCE {source}".format(source=source), file=device)
+    print(":TRIGGER:EDGE:SOURCE {source}".format(source=source), file=device)
 
 
 def onSaveImage(client, device, payload):
-    print(":SAVE:IMAGE:FORMAT PNG", file=device)
-    print(":SAVE:IMAGE", file=device)
+    # There's no command to save image data to USB storage.
+    pass
 
 
 def onSetProbeCoupling(client, device, payload):

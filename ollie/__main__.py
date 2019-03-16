@@ -24,11 +24,13 @@ import traceback
 
 from .pixels import pixels
 from . import keysight
+from . import rigol
 
 def on_message(client, userdata, msg):
     try:
         topic = msg.topic
         payload = json.loads(msg.payload.decode("utf-8"))
+        scope, device = userdata
 
         print("topic received: {}, payload: {}".format(topic, payload), file=sys.stderr)
         if topic == "hermes/dialogueManager/sessionStarted":
@@ -46,35 +48,35 @@ def on_message(client, userdata, msg):
                            payload=json.dumps(dict(sessionId=payload["sessionId"])))
 
         if topic == "hermes/intent/jmwilson:runCapture":
-            keysight.onRunCapture(client, userdata, payload)
+            scope.onRunCapture(client, device, payload)
         if topic == "hermes/intent/jmwilson:stopCapture":
-            keysight.onStopCapture(client, userdata, payload)
+            scope.onStopCapture(client, device, payload)
         if topic == "hermes/intent/jmwilson:singleCapture":
-            keysight.onSingleCapture(client, userdata, payload)
+            scope.onSingleCapture(client, device, payload)
         if topic == "hermes/intent/jmwilson:showChannel":
-            keysight.onShowChannel(client, userdata, payload)
+            scope.onShowChannel(client, device, payload)
         if topic == "hermes/intent/jmwilson:hideChannel":
-            keysight.onHideChannel(client, userdata, payload)
+            scope.onHideChannel(client, device, payload)
         if topic == "hermes/intent/jmwilson:setTimeBaseScale":
-            keysight.onSetTimebaseScale(client, userdata, payload)
+            scope.onSetTimebaseScale(client, device, payload)
         if topic == "hermes/intent/jmwilson:setTimebaseReference":
-            keysight.onSetTimebaseReference(client, userdata, payload)
+            scope.onSetTimebaseReference(client, device, payload)
         if topic == "hermes/intent/jmwilson:setChannelVerticalScale":
-            keysight.onSetChannelVerticalScale(client, userdata, payload)
+            scope.onSetChannelVerticalScale(client, device, payload)
         if topic == "hermes/intent/jmwilson:measure":
-            keysight.onMeasure(client, userdata, payload)
+            scope.onMeasure(client, device, payload)
         if topic == "hermes/intent/jmwilson:clearAllMeasurements":
-            keysight.onClearAllMeasurements(client, userdata, payload)
+            scope.onClearAllMeasurements(client, device, payload)
         if topic == "hermes/intent/jmwilson:setTriggerSource":
-            keysight.onSetTriggerSource(client, userdata, payload)
+            scope.onSetTriggerSource(client, device, payload)
         if topic == "hermes/intent/jmwilson:setTriggerSlope":
-            keysight.onSetTriggerSlope(client, userdata, payload)
+            scope.onSetTriggerSlope(client, device, payload)
         if topic == "hermes/intent/jmwilson:saveImage":
-            keysight.onSaveImage(client, userdata, payload)
+            scope.onSaveImage(client, device, payload)
         if topic == "hermes/intent/jmwilson:setProbeCoupling":
-            keysight.onSetProbeCoupling(client, userdata, payload)
+            scope.onSetProbeCoupling(client, device, payload)
         if topic == "hermes/intent/jmwilson:setProbeAttenuation":
-            keysight.onSetProbeAttenuation(client, userdata, payload)
+            scope.onSetProbeAttenuation(client, device, payload)
     except Exception:
         print(traceback.format_exc(), file=sys.stderr)
         raise
@@ -84,18 +86,29 @@ def main():
     try:
         # Open with line buffering because usbtmc is similar to a tty
         dev = open("/dev/usbtmc0", mode="r+", buffering=1)
+        print("*IDN?", file=dev)
+        ident = dev.readline()
+        if ident.startswith("KEYSIGHT") or ident.startswith("AGILENT"):
+            print("Keysight device detected", file=sys.stderr)
+            scope = keysight
+        elif ident.startswith("RIGOL"):
+            print("Rigol device detected", file=sys.stderr)
+            scope = rigol
+        else:
+            print("No device detected", file=sys.stderr)
+            raise ValueError(ident)
     except FileNotFoundError:
         # If /dev/usbtmc0 is not there, assume some race condition with
         # device disconnect and service restarts. exit(0) will stop retries.
         pixels.error()
         sys.exit(0)
-    except OSError:
+    except (OSError, ValueError):
         # For other errors, exit(1) + Restart=on-failure in the systemd unit
         # file will force retrying.
         pixels.error()
         sys.exit(1)
 
-    client = mqtt.Client(userdata=dev)
+    client = mqtt.Client(userdata=(scope, dev))
     client.on_message = on_message
 
     client.connect("localhost")
