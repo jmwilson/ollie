@@ -13,6 +13,6 @@ Package: ollie
 Architecture: all
 Depends: ${python3:Depends}, ${misc:Depends}, adduser
 Recommends: ollie-assistant
-Description: Voice control for Keysight 1000-X oscilloscopes using Snips
+Description: Voice control for oscilloscopes using Snips
  .
  This package installs the library for Python 3.

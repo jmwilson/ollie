@@ -1,3 +1,9 @@
+ollie (0.0~20190318.gita54265d) xenial; urgency=medium
+
+  * 2019-03-18 git rev a54265d0430e43157236273be523961671344157
+
+ -- James Wilson <jmw@jmw.name>  Sat, 16 Mar 2019 17:02:14 -0700
+
 ollie (0.0~20190310.hg00726893b674) xenial; urgency=medium
 
   * 2019-03-10 hg rev 19:00726893b674

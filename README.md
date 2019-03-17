@@ -1,10 +1,16 @@
 # ollie
-Voice control for Keysight oscilloscopes using Snips
+Voice control for oscilloscopes using Snips
 
-Ollie is a voice control assistant for Keysight 1000-6000 oscilloscopes. Frequently I would be probing a board with both hands and wished I could just yell at the scope to pause the capture. Keysight does offer voice control for its oscilloscopes — starting on the 6000 series. For those of us on a more modest budget, a Raspberry Pi and the [Snips](https://snips.ai) platform can be an excellent substitute. Using your voice, you can control the oscilloscope to do:
+Ollie is a voice control assistant for digital oscilloscopes. Frequently I would be probing a board with both hands and wished I could just yell at the scope to pause the capture. Keysight does offer voice control for its oscilloscopes — starting on the 6000 series. For those of us on a more modest budget, a Raspberry Pi and the [Snips](https://snips.ai) platform can be an excellent substitute.
+
+Supported oscilloscopes
+- Keysight MSO-X and DSO-X 1000-6000 series
+- Rigol MSO and DS 1000-4000 series
+
+Using your voice, you can control the oscilloscope to do:
 
 - run/stop/single capture: "run", "stop", "single"
-- show/hide channels: "show channel two", "hide the external trigger", "show reference one"
+- show/hide channels: "show channel two", "hide the external trigger", "show reference one", "show digital zero"
 - adjust vertical/horizontal scale: "set the time base to 100 nanoseconds", "set channel one vertical scale to 2 volts"
 - add and clear measurements: "show me the frequency for channel one"
     - duty cycle
@@ -29,7 +35,7 @@ Things you'll need:
 
 Ready-to-use images are available for the Raspberry Pi. These images include a base Raspbian lite installation, with all drivers, Snips, and the Ollie assistant installed. The image is generated using a fork of pi-gen (https://github.com/jmwilson/pi-gen-ollie).
 
-[Download the latest image](https://s3-us-west-2.amazonaws.com/ollie-dist/image_2019-03-11-Ollie.zip) (SHA-256: `19bd0ebb3c4885eef3436ed2187f81d6f504f101ef3a5fdfb5878615656a231e`)
+[Download the latest image](https://ollie-dist.s3.amazonaws.com/image_2019-03-16-Ollie.zip) (SHA-256: `f0e40f2ddad69d4bfb8d4c10b9b24b6c657f04cf438db074b813a967c86a3e51`)
 
 [Instructions for flashing a Raspbian image](https://www.raspberrypi.org/documentation/installation/installing-images/)
 
