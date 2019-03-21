@@ -77,9 +77,13 @@ def on_message(client, userdata, msg):
             scope.onSetProbeCoupling(client, device, payload)
         if topic == "hermes/intent/jmwilson:setProbeAttenuation":
             scope.onSetProbeAttenuation(client, device, payload)
+        if topic == "hermes/intent/jmwilson:autoScale":
+            scope.onAutoScale(client, device, payload)
+        if topic == "hermes/intent/jmwilson:defaultSetup":
+            scope.onDefaultSetup(client, device, payload)
     except Exception:
         print(traceback.format_exc(), file=sys.stderr)
-        raise
+        raise  # note: paho-mqtt ignores all exceptions
 
 
 def main():

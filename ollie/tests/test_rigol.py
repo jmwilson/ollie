@@ -174,3 +174,13 @@ class RigolTest(unittest.TestCase):
         payload = self.makeSnipsPayload(channel=1, ratio=10)
         rigol.onSetProbeAttenuation(self.client, self.device, payload)
         self.device.write.assert_any_call(":CHANNEL1:PROBE 10")
+
+    def testAutoScale(self):
+        rigol.onAutoScale(self.client, self.device, self.makeSnipsPayload())
+        self.client.assert_not_called()
+        self.device.write.assert_any_call(":AUTOSCALE")
+
+    def testDefaultSetup(self):
+        rigol.onDefaultSetup(self.client, self.device, self.makeSnipsPayload())
+        self.client.assert_not_called()
+        self.device.write.assert_any_call("*RST")

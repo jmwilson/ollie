@@ -182,3 +182,13 @@ class KeysightTest(unittest.TestCase):
         payload = self.makeSnipsPayload(channel=1, ratio=10)
         keysight.onSetProbeAttenuation(self.client, self.device, payload)
         self.device.write.assert_any_call(":CHANNEL1:PROBE 10")
+
+    def testAutoScale(self):
+        keysight.onAutoScale(self.client, self.device, self.makeSnipsPayload())
+        self.client.assert_not_called()
+        self.device.write.assert_any_call(":AUTOSCALE")
+
+    def testDefaultSetup(self):
+        keysight.onDefaultSetup(self.client, self.device, self.makeSnipsPayload())
+        self.client.assert_not_called()
+        self.device.write.assert_any_call(":SYSTEM:PRESET")

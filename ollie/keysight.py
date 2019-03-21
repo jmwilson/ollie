@@ -243,3 +243,11 @@ def onSetProbeAttenuation(client, device, payload):
             ratio = float(slot['value']['value'])
     print(":CHANNEL{n}:PROBE {ratio:G}".format(
         n=channel, ratio=ratio), file=device)
+
+
+def onAutoScale(client, device, payload):
+    print(":AUTOSCALE", file=device)
+
+
+def onDefaultSetup(client, device, payload):
+    print(":SYSTEM:PRESET", file=device)
