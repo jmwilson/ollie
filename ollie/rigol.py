@@ -152,9 +152,10 @@ horizontal_zoom_levels = [
     2000, # invalid
 ]
 
-# Based on range possible on the DS 4000 @ 1M input impedance
+# Based on range possible on the DS 1054
 vertical_zoom_levels = [
-    500e-6, # invalid
+    200e-6, # invalid
+    500e-6,
     1e-3,    2e-3,    5e-3,
     10e-3,   20e-3,   50e-3,
     100e-3,  200e-3,  500e-3,
