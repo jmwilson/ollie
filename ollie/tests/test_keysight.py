@@ -192,3 +192,31 @@ class KeysightTest(unittest.TestCase):
         keysight.onDefaultSetup(self.client, self.device, self.makeSnipsPayload())
         self.client.assert_not_called()
         self.device.write.assert_any_call(":SYSTEM:PRESET")
+
+    def testIncreaseTimebase(self):
+        self.device.readline.return_value = 1
+        keysight.onIncreaseTimebase(self.client, self.device, self.makeSnipsPayload())
+        self.client.assert_not_called()
+        self.device.write.assert_any_call(":TIMEBASE:SCALE 2")
+
+    def testDecreaseTimebase(self):
+        self.device.readline.return_value = 1
+        keysight.onDecreaseTimebase(self.client, self.device, self.makeSnipsPayload())
+        self.client.assert_not_called()
+        self.device.write.assert_any_call(":TIMEBASE:SCALE 0.5")
+
+    def testIncreaseVerticalScale(self):
+        with self.assertRaises(RuntimeError):
+            keysight.onIncreaseVerticalScale(self.client, self.device, self.makeSnipsPayload())
+        self.device.readline.return_value = 1
+        payload = self.makeSnipsPayload(channel=1)
+        keysight.onIncreaseVerticalScale(self.client, self.device, payload)
+        self.device.write.assert_any_call(":CHANNEL1:SCALE 2")
+
+    def testDecreaseVerticalScale(self):
+        with self.assertRaises(RuntimeError):
+            keysight.onDecreaseVerticalScale(self.client, self.device, self.makeSnipsPayload())
+        self.device.readline.return_value = 1
+        payload = self.makeSnipsPayload(channel=1)
+        keysight.onDecreaseVerticalScale(self.client, self.device, payload)
+        self.device.write.assert_any_call(":CHANNEL1:SCALE 0.5")

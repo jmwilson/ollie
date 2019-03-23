@@ -81,6 +81,14 @@ def on_message(client, userdata, msg):
             scope.onAutoScale(client, device, payload)
         if topic == "hermes/intent/jmwilson:defaultSetup":
             scope.onDefaultSetup(client, device, payload)
+        if topic == "hermes/intent/jmwilson:increaseTimebase":
+            scope.onIncreaseTimebase(client, device, payload)
+        if topic == "hermes/intent/jmwilson:decreaseTimebase":
+            scope.onDecreaseTimebase(client, device, payload)
+        if topic == "hermes/intent/jmwilson:increaseVerticalScale":
+            scope.onIncreaseVerticalScale(client, device, payload)
+        if topic == "hermes/intent/jmwilson:decreaseVerticalScale":
+            scope.onDecreaseVerticalScale(client, device, payload)
     except Exception:
         print(traceback.format_exc(), file=sys.stderr)
         raise  # note: paho-mqtt ignores all exceptions

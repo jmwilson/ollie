@@ -128,6 +128,41 @@ trigger_slopes = {
     "either": "RFAL",
 }
 
+# Based on the range possible on the DS 7054
+# < 500 ps and > 1000s are invalid, but included as sentinel values when the
+# control is currently at an extreme. Trying to bump to an invalid value
+# will give a visual error indication on the oscilloscope screen, much
+# like continuing to turn the knob.
+horizontal_zoom_levels = [
+    200e-12, # invalid
+    500e-12,
+    1e-9,    2e-9,    5e-9,
+    10e-9,   20e-9,   50e-9,
+    100e-9,  200e-9,  500e-9,
+    1e-6,    2e-6,    5e-6,
+    10e-6,   20e-6,   50e-6,
+    100e-6,  200e-6,  500e-6,
+    1e-3,    2e-3,    5e-3,
+    10e-3,   20e-3,   50e-3,
+    100e-3,  200e-3,  500e-3,
+    1,       2,       5,
+    10,      20,      50,
+    100,     200,     500,
+    1000,
+    2000, # invalid
+]
+
+# Based on range possible on the DS 4000 @ 1M input impedance
+vertical_zoom_levels = [
+    500e-6, # invalid
+    1e-3,    2e-3,    5e-3,
+    10e-3,   20e-3,   50e-3,
+    100e-3,  200e-3,  500e-3,
+    1,       2,       5,
+    10,
+    20, # invalid
+]
+
 
 def expectSlots(payload, expected):
     if len(payload['slots']) != expected:
@@ -267,3 +302,43 @@ def onAutoScale(client, device, payload):
 
 def onDefaultSetup(client, device, payload):
     print("*RST", file=device)
+
+
+def onIncreaseTimebase(client, device, payload):
+    print(":TIMEBASE:SCALE?", file=device)
+    scale = float(device.readline())
+    new_scale = next(x for x in horizontal_zoom_levels if scale < x)
+    print(":TIMEBASE:SCALE {scale:G}".format(scale=new_scale), file=device)
+
+
+def onDecreaseTimebase(client, device, payload):
+    print(":TIMEBASE:SCALE?", file=device)
+    scale = float(device.readline())
+    new_scale = next(x for x in reversed(horizontal_zoom_levels) if scale > x)
+    print(":TIMEBASE:SCALE {scale:G}".format(scale=new_scale), file=device)
+
+
+def onIncreaseVerticalScale(client, device, payload):
+    expectSlots(payload, 1)
+    channel = int(payload['slots'][0]['value']['value'])
+    print(":CHANNEL{n}:SCALE?".format(n=channel), file=device)
+    scale = float(device.readline())
+    print(":CHANNEL{n}:PROBE?".format(n=channel), file=device)
+    ratio = float(device.readline())
+    new_scale = ratio * \
+        next(x for x in vertical_zoom_levels if scale/ratio < x)
+    print(":CHANNEL{n}:SCALE {scale:G}".format(
+        n=channel, scale=new_scale), file=device)
+
+
+def onDecreaseVerticalScale(client, device, payload):
+    expectSlots(payload, 1)
+    channel = int(payload['slots'][0]['value']['value'])
+    print(":CHANNEL{n}:SCALE?".format(n=channel), file=device)
+    scale = float(device.readline())
+    print(":CHANNEL{n}:PROBE?".format(n=channel), file=device)
+    ratio = float(device.readline())
+    new_scale = ratio * \
+        next(x for x in reversed(vertical_zoom_levels) if scale/ratio > x)
+    print(":CHANNEL{n}:SCALE {scale:G}".format(
+        n=channel, scale=new_scale), file=device)
