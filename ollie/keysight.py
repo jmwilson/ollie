@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 
+# Custom slot type: Measurement source
 measurement_sources = {
     "channel one": "CHANNEL1",
     "channel two": "CHANNEL2",
@@ -46,6 +47,7 @@ measurement_sources = {
 
 display_sources = measurement_sources
 
+# Custom slot type: Time units
 time_units = {
     "seconds": 1.,
     "milliseconds": 1e-3,
@@ -53,6 +55,7 @@ time_units = {
     "nanoseconds": 1e-9,
 }
 
+# Custom slot type: Vertical units
 vertical_units = {
     "volts": ("voltage", 1),
     "millivolts": ("voltage", 1e-3),
@@ -60,12 +63,14 @@ vertical_units = {
     "milliamps": ("current", 1e-3),
 }
 
+# Values used in the reference slot for setTimebaseReference intent
 timebase_references = {
     "left": "LEFT",
     "center": "CENTER",
     "right": "RIGHT",
 }
 
+# Custom slot type: Measurement type
 measurement_commands = {
     "duty cycle": "DUTYCYCLE",
     "fall time": "FALLTIME",
@@ -85,6 +90,7 @@ measurement_commands = {
     "negative pulse width": "NWIDTH",
 }
 
+# Custom slot type: Trigger source
 trigger_sources = {
     "channel one": "CHANNEL1",
     "channel two": "CHANNEL2",
@@ -111,6 +117,7 @@ trigger_sources = {
     "generator": "WGEN",
 }
 
+# Custom slot type: Trigger slope
 trigger_slopes = {
     "negative": "NEGATIVE",
     "positive": "POSITIVE",
@@ -124,7 +131,7 @@ trigger_slopes = {
 # will give a visual error indication on the oscilloscope screen, much
 # like continuing to turn the knob.
 horizontal_zoom_levels = [
-    50e-12, # invalid
+    10e-12,  20e-12,  50e-12,
     100e-12, 200e-12, 500e-12,
     1e-9,    2e-9,    5e-9,
     10e-9,   20e-9,   50e-9,
@@ -137,19 +144,17 @@ horizontal_zoom_levels = [
     100e-3,  200e-3,  500e-3,
     1,       2,       5,
     10,      20,      50,
-    100 # invalid
+    100,     200,     500,
 ]
 
-# Based on range possible on the 1000-X
+# Based on range possible on the 1000-X: .5 mV - 10 V
 vertical_zoom_levels = [
-    200e-6, # invalid
-    500e-6,
+    100e-6,  200e-6,  500e-6,
     1e-3,    2e-3,    5e-3,
     10e-3,   20e-3,   50e-3,
     100e-3,  200e-3,  500e-3,
     1,       2,       5,
-    10,
-    20, # invalid
+    10,      20,      50,
 ]
 
 
@@ -166,18 +171,39 @@ def expectSlots(payload, expected):
 
 
 def onRunCapture(client, device, payload):
+    """
+    Snips intent name: runCapture
+
+    Slots: none
+    """
     print(":RUN", file=device)
 
 
 def onStopCapture(client, device, payload):
+    """
+    Snips intent name: stopCapture
+
+    Slots: none
+    """
     print(":STOP", file=device)
 
 
 def onSingleCapture(client, device, payload):
+    """
+    Snips intent name: singleCapture
+
+    Slots: none
+    """
     print(":SINGLE", file=device)
 
 
 def onShowChannel(client, device, payload):
+    """
+    Snips intent name: showChannel
+
+    Slots:
+    source: custom/Measurement source
+    """
     expectSlots(payload, 1)
     value = payload['slots'][0]['value']['value']
     source = display_sources[value]
@@ -185,6 +211,12 @@ def onShowChannel(client, device, payload):
 
 
 def onHideChannel(client, device, payload):
+    """
+    Snips intent name: hideChannel
+
+    Slots:
+    source: custom/Measurement source
+    """
     expectSlots(payload, 1)
     value = payload['slots'][0]['value']['value']
     source = display_sources[value]
@@ -192,6 +224,13 @@ def onHideChannel(client, device, payload):
 
 
 def onSetTimebaseScale(client, device, payload):
+    """
+    Snips intent name: setTimebaseScale
+
+    Slots:
+    scale: snips/number
+    units: custom/Time units
+    """
     expectSlots(payload, 2)
     for slot in payload['slots']:
         if slot['slotName'] == "scale":
@@ -202,6 +241,12 @@ def onSetTimebaseScale(client, device, payload):
 
 
 def onSetTimebaseReference(client, device, payload):
+    """
+    Snips intent name: setTimebaseReference
+
+    Slots:
+    reference: snips/default
+    """
     expectSlots(payload, 1)
     value = payload['slots'][0]['value']['value']
     ref = timebase_references[value]
@@ -209,6 +254,14 @@ def onSetTimebaseReference(client, device, payload):
 
 
 def onSetChannelVerticalScale(client, device, payload):
+    """
+    Snips intent name: setChannelVerticalScale
+
+    Slots:
+    channel: snips/number
+    scale: snips/number
+    units: custom/Vertical units
+    """
     expectSlots(payload, 3)
     for slot in payload['slots']:
         if slot['slotName'] == "channel":
@@ -225,6 +278,13 @@ def onSetChannelVerticalScale(client, device, payload):
 
 
 def onMeasure(client, device, payload):
+    """
+    Snips intent name: measure
+
+    Slots:
+    source: custom/Measurement source
+    type: custom/Measurement type
+    """
     expectSlots(payload, 2)
     for slot in payload['slots']:
         if slot['slotName'] == "type":
@@ -235,10 +295,21 @@ def onMeasure(client, device, payload):
 
 
 def onClearAllMeasurements(client, device, payload):
+    """
+    Snips intent name: clearAllMeasurements
+
+    Slots: none
+    """
     print(":MEASURE:CLEAR", file=device)
 
 
 def onSetTriggerSlope(client, device, payload):
+    """
+    Snips intent name: setTriggerSlope
+
+    Slots:
+    slope: custom/Trigger slope
+    """
     expectSlots(payload, 1)
     value = payload['slots'][0]['value']['value']
     slope = trigger_slopes[value]
@@ -246,6 +317,12 @@ def onSetTriggerSlope(client, device, payload):
 
 
 def onSetTriggerSource(client, device, payload):
+    """
+    Snips intent name: setTriggerSource
+
+    Slots:
+    source: custom/Trigger source
+    """
     expectSlots(payload, 1)
     value = payload['slots'][0]['value']['value']
     source = trigger_sources[value]
@@ -253,11 +330,23 @@ def onSetTriggerSource(client, device, payload):
 
 
 def onSaveImage(client, device, payload):
+    """
+    Snips intent name: saveImage
+
+    Slots: none
+    """
     print(":SAVE:IMAGE:FORMAT PNG", file=device)
     print(":SAVE:IMAGE", file=device)
 
 
 def onSetProbeCoupling(client, device, payload):
+    """
+    Snips intent name: setProbeCoupling
+
+    Slots:
+    channel: snips/number
+    coupling: custom/coupling
+    """
     expectSlots(payload, 2)
     for slot in payload['slots']:
         if slot['slotName'] == "channel":
@@ -269,6 +358,13 @@ def onSetProbeCoupling(client, device, payload):
 
 
 def onSetProbeAttenuation(client, device, payload):
+    """
+    Snips intent name: setProbeAttenuation
+
+    Slots:
+    channel: snips/number
+    ratio: snips/number
+    """
     expectSlots(payload, 2)
     for slot in payload['slots']:
         if slot['slotName'] == "channel":
@@ -280,14 +376,29 @@ def onSetProbeAttenuation(client, device, payload):
 
 
 def onAutoScale(client, device, payload):
+    """
+    Snips intent name: autoScale
+
+    Slots: none
+    """
     print(":AUTOSCALE", file=device)
 
 
 def onDefaultSetup(client, device, payload):
+    """
+    Snips intent name: defaultSetup
+
+    Slots: none
+    """
     print(":SYSTEM:PRESET", file=device)
 
 
 def onIncreaseTimebase(client, device, payload):
+    """
+    Snips intent name: increaseTimebase
+
+    Slots: none
+    """
     print(":TIMEBASE:SCALE?", file=device)
     scale = float(device.readline())
     new_scale = next(x for x in horizontal_zoom_levels if scale < x)
@@ -295,6 +406,11 @@ def onIncreaseTimebase(client, device, payload):
 
 
 def onDecreaseTimebase(client, device, payload):
+    """
+    Snips intent name: decreaseTimebase
+
+    Slots: none
+    """
     print(":TIMEBASE:SCALE?", file=device)
     scale = float(device.readline())
     new_scale = next(x for x in reversed(horizontal_zoom_levels) if scale > x)
@@ -302,6 +418,12 @@ def onDecreaseTimebase(client, device, payload):
 
 
 def onIncreaseVerticalScale(client, device, payload):
+    """
+    Snips intent name: increaseVerticalScale
+
+    Slots:
+    channel: snips/number
+    """
     expectSlots(payload, 1)
     channel = int(payload['slots'][0]['value']['value'])
     print(":CHANNEL{n}:SCALE?".format(n=channel), file=device)
@@ -315,6 +437,12 @@ def onIncreaseVerticalScale(client, device, payload):
 
 
 def onDecreaseVerticalScale(client, device, payload):
+    """
+    Snips intent name: decreaseVerticalScale
+
+    Slots:
+    channel: snips/number
+    """
     expectSlots(payload, 1)
     channel = int(payload['slots'][0]['value']['value'])
     print(":CHANNEL{n}:SCALE?".format(n=channel), file=device)
