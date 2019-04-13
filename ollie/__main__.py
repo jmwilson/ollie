@@ -32,7 +32,7 @@ def on_message(client, userdata, msg):
         payload = json.loads(msg.payload.decode("utf-8"))
         scope, device = userdata
 
-        print("topic received: {}, payload: {}".format(topic, payload), file=sys.stderr)
+        print(f"topic received: {topic}, payload: {payload}", file=sys.stderr)
         if topic == "hermes/dialogueManager/sessionStarted":
             pixels.listen()
         if topic == "hermes/dialogueManager/sessionEnded":

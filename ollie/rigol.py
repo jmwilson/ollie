@@ -216,7 +216,7 @@ def onShowChannel(client, device, payload):
     expectSlots(payload, 1)
     value = payload['slots'][0]['value']['value']
     source = display_sources[value]
-    print(":{source}:DISPLAY ON".format(source=source), file=device)
+    print(f":{source}:DISPLAY ON", file=device)
 
 
 def onHideChannel(client, device, payload):
@@ -229,7 +229,7 @@ def onHideChannel(client, device, payload):
     expectSlots(payload, 1)
     value = payload['slots'][0]['value']['value']
     source = display_sources[value]
-    print(":{source}:DISPLAY OFF".format(source=source), file=device)
+    print(f":{source}:DISPLAY OFF", file=device)
 
 
 def onSetTimebaseScale(client, device, payload):
@@ -246,7 +246,7 @@ def onSetTimebaseScale(client, device, payload):
             scale_mantissa = int(slot['value']['value'])
         if slot['slotName'] == "units":
             scale_exp = time_units[slot['value']['value']]
-    print(":TIMEBASE:SCALE {scale:G}".format(scale=scale_mantissa * scale_exp), file=device)
+    print(f":TIMEBASE:SCALE {(scale_mantissa * scale_exp):G}", file=device)
 
 
 def onSetTimebaseReference(client, device, payload):
@@ -261,11 +261,11 @@ def onSetTimebaseReference(client, device, payload):
     print(":TIMEBASE:SCALE?", file=device)
     scale = float(device.readline())
     if value == "left":
-        print(":TIMEBASE:OFFSET {offset:G}".format(offset=4 * scale), file=device)
+        print(f":TIMEBASE:OFFSET {(4 * scale):G}", file=device)
     if value == "center":
-        print(":TIMEBASE:OFFSET 0", file=device)
+        print(f":TIMEBASE:OFFSET 0", file=device)
     if value == "right":
-        print(":TIMEBASE:OFFSET {offset:G}".format(offset=-4 * scale), file=device)
+        print(f":TIMEBASE:OFFSET {(-4 * scale):G}", file=device)
 
 
 def onSetChannelVerticalScale(client, device, payload):
@@ -286,10 +286,10 @@ def onSetChannelVerticalScale(client, device, payload):
         if slot['slotName'] == "units":
             unit_type, exp = vertical_units[slot['value']['value']]
     if unit_type == "voltage":
-        print(":CHANNEL{n}:UNITS VOLTAGE".format(n=channel), file=device)
+        print(f":CHANNEL{channel}:UNITS VOLTAGE", file=device)
     else:
-        print(":CHANNEL{n}:UNITS AMPERE".format(n=channel), file=device)
-    print(":CHANNEL{n}:SCALE {scale:G}".format(n=channel, scale=scale * exp), file=device)
+        print(f":CHANNEL{channel}:UNITS AMPERE", file=device)
+    print(f":CHANNEL{channel}:SCALE {(scale * exp):G}", file=device)
 
 
 def onMeasure(client, device, payload):
@@ -306,7 +306,7 @@ def onMeasure(client, device, payload):
             subcommand = measurement_commands[slot['value']['value']]
         if slot['slotName'] == "source":
             source = measurement_sources[slot['value']['value']]
-    print(":MEASURE:ITEM {cmd},{source}".format(cmd=subcommand, source=source), file=device)
+    print(f":MEASURE:ITEM {subcommand},{source}", file=device)
 
 
 def onClearAllMeasurements(client, device, payload):
@@ -328,7 +328,7 @@ def onSetTriggerSlope(client, device, payload):
     expectSlots(payload, 1)
     value = payload['slots'][0]['value']['value']
     slope = trigger_slopes[value]
-    print(":TRIGGER:EDGE:SLOPE {slope}".format(slope=slope), file=device)
+    print(f":TRIGGER:EDGE:SLOPE {slope}", file=device)
 
 
 def onSetTriggerSource(client, device, payload):
@@ -341,7 +341,7 @@ def onSetTriggerSource(client, device, payload):
     expectSlots(payload, 1)
     value = payload['slots'][0]['value']['value']
     source = trigger_sources[value]
-    print(":TRIGGER:EDGE:SOURCE {source}".format(source=source), file=device)
+    print(f":TRIGGER:EDGE:SOURCE {source}", file=device)
 
 
 def onSaveImage(client, device, payload):
@@ -368,8 +368,7 @@ def onSetProbeCoupling(client, device, payload):
             channel = int(slot['value']['value'])
         if slot['slotName'] == "coupling":
             coupling = slot['value']['value']
-    print(":CHANNEL{n}:COUPLING {coupling}".format(
-        n=channel, coupling=coupling), file=device)
+    print(f":CHANNEL{channel}:COUPLING {coupling}", file=device)
 
 
 def onSetProbeAttenuation(client, device, payload):
@@ -386,8 +385,7 @@ def onSetProbeAttenuation(client, device, payload):
             channel = int(slot['value']['value'])
         if slot['slotName'] == "ratio":
             ratio = float(slot['value']['value'])
-    print(":CHANNEL{n}:PROBE {ratio:G}".format(
-        n=channel, ratio=ratio), file=device)
+    print(f":CHANNEL{channel}:PROBE {ratio:G}", file=device)
 
 
 def onAutoScale(client, device, payload):
@@ -417,7 +415,7 @@ def onIncreaseTimebase(client, device, payload):
     print(":TIMEBASE:SCALE?", file=device)
     scale = float(device.readline())
     new_scale = next(x for x in horizontal_zoom_levels if scale < x)
-    print(":TIMEBASE:SCALE {scale:G}".format(scale=new_scale), file=device)
+    print(f":TIMEBASE:SCALE {new_scale:G}", file=device)
 
 
 def onDecreaseTimebase(client, device, payload):
@@ -429,7 +427,7 @@ def onDecreaseTimebase(client, device, payload):
     print(":TIMEBASE:SCALE?", file=device)
     scale = float(device.readline())
     new_scale = next(x for x in reversed(horizontal_zoom_levels) if scale > x)
-    print(":TIMEBASE:SCALE {scale:G}".format(scale=new_scale), file=device)
+    print(f":TIMEBASE:SCALE {new_scale:G}", file=device)
 
 
 def onIncreaseVerticalScale(client, device, payload):
@@ -441,14 +439,13 @@ def onIncreaseVerticalScale(client, device, payload):
     """
     expectSlots(payload, 1)
     channel = int(payload['slots'][0]['value']['value'])
-    print(":CHANNEL{n}:SCALE?".format(n=channel), file=device)
+    print(f":CHANNEL{channel}:SCALE?", file=device)
     scale = float(device.readline())
-    print(":CHANNEL{n}:PROBE?".format(n=channel), file=device)
+    print(f":CHANNEL{channel}:PROBE?", file=device)
     ratio = float(device.readline())
     new_scale = ratio * \
         next(x for x in vertical_zoom_levels if scale/ratio < x)
-    print(":CHANNEL{n}:SCALE {scale:G}".format(
-        n=channel, scale=new_scale), file=device)
+    print(f":CHANNEL{channel}:SCALE {new_scale:G}", file=device)
 
 
 def onDecreaseVerticalScale(client, device, payload):
@@ -460,11 +457,10 @@ def onDecreaseVerticalScale(client, device, payload):
     """
     expectSlots(payload, 1)
     channel = int(payload['slots'][0]['value']['value'])
-    print(":CHANNEL{n}:SCALE?".format(n=channel), file=device)
+    print(f":CHANNEL{channel}:SCALE?", file=device)
     scale = float(device.readline())
-    print(":CHANNEL{n}:PROBE?".format(n=channel), file=device)
+    print(f":CHANNEL{channel}:PROBE?", file=device)
     ratio = float(device.readline())
     new_scale = ratio * \
         next(x for x in reversed(vertical_zoom_levels) if scale/ratio > x)
-    print(":CHANNEL{n}:SCALE {scale:G}".format(
-        n=channel, scale=new_scale), file=device)
+    print(f":CHANNEL{channel}:SCALE {new_scale:G}", file=device)
