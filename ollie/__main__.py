@@ -99,13 +99,13 @@ def on_message(client, userdata, msg):
 def main():
     try:
         # Open with line buffering because usbtmc is similar to a tty
-        dev = open("/dev/usbtmc0", mode="r+", buffering=1)
+        dev = open("/dev/usbtmc0", mode="r+", buffering=1, encoding='ascii')
         print("*IDN?", file=dev)
         ident = dev.readline()
-        if ident.startswith("KEYSIGHT") or ident.startswith("AGILENT"):
+        if ident.upper().startswith("KEYSIGHT") or ident.upper().startswith("AGILENT"):
             print("Keysight device detected", file=sys.stderr)
             scope = keysight
-        elif ident.startswith("RIGOL"):
+        elif ident.upper().startswith("RIGOL"):
             print("Rigol device detected", file=sys.stderr)
             scope = rigol
         else:
