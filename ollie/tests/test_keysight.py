@@ -220,3 +220,8 @@ class KeysightTest(unittest.TestCase):
         payload = self.makeSnipsPayload(channel=1)
         keysight.onDecreaseVerticalScale(self.client, self.device, payload)
         self.device.write.assert_any_call(":CHANNEL1:SCALE 0.5")
+
+    def testForceTrigger(self):
+        keysight.onForceTrigger(self.client, self.device, self.makeSnipsPayload())
+        self.client.assert_not_called()
+        self.device.write.assert_any_call(":TRIGGER:FORCE")

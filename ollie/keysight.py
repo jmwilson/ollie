@@ -449,3 +449,12 @@ def onDecreaseVerticalScale(client, device, payload):
     new_scale = ratio * \
         next(x for x in reversed(vertical_zoom_levels) if scale/ratio > x)
     print(f":CHANNEL{channel}:SCALE {new_scale:G}", file=device)
+
+
+def onForceTrigger(client, device, payload):
+    """
+    Snips intent name: forceTrigger
+
+    Slots: none
+    """
+    print(":TRIGGER:FORCE", file=device)

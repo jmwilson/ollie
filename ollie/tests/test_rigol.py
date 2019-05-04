@@ -212,3 +212,8 @@ class RigolTest(unittest.TestCase):
         payload = self.makeSnipsPayload(channel=1)
         rigol.onDecreaseVerticalScale(self.client, self.device, payload)
         self.device.write.assert_any_call(":CHANNEL1:SCALE 0.5")
+
+    def testForceTrigger(self):
+        rigol.onForceTrigger(self.client, self.device, self.makeSnipsPayload())
+        self.client.assert_not_called()
+        self.device.write.assert_any_call(":TFORCE")

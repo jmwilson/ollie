@@ -89,6 +89,8 @@ def on_message(client, userdata, msg):
             scope.onIncreaseVerticalScale(client, device, payload)
         if topic == "hermes/intent/jmwilson:decreaseVerticalScale":
             scope.onDecreaseVerticalScale(client, device, payload)
+        if topic == "hermes/intent/jmwilson:forceTrigger":
+            scope.onForceTrigger(client, device, payload)
     except Exception:
         print(traceback.format_exc(), file=sys.stderr)
         raise  # note: paho-mqtt ignores all exceptions
