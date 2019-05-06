@@ -498,7 +498,7 @@ def onAutoTriggerLevels(client, device, payload):
 
     Slots: none
     """
-    print(":TRIGGER:ASETUP", file=device)
+    print(":TRIGGER:LEVEL:ASETUP", file=device)
 
 
 def onSetTriggerCoupling(client, device, payload):

@@ -255,7 +255,7 @@ class KeysightTest(unittest.TestCase):
     def testAutoTriggerLevels(self):
         keysight.onAutoTriggerLevels(self.client, self.device, self.makeSnipsPayload())
         self.client.assert_not_called()
-        self.device.write.assert_any_call(":TRIGGER:ASETUP")
+        self.device.write.assert_any_call(":TRIGGER:LEVEL:ASETUP")
 
     def testSetTriggerCoupling(self):
         with self.assertRaises(RuntimeError):
