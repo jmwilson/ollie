@@ -1,3 +1,9 @@
+ollie (0.0~20190505.hg345d7981b5b5) xenial; urgency=medium
+
+  * 2019-05-05 hg rev 345d7981b5b5
+
+ -- James Wilson <jmw@jmw.name>  Sun, 05 May 2019 18:36:19 -0700
+
 ollie (0.0~20190413.hgadc399476954) xenial; urgency=medium
 
   * 2019-04-13 hg rev adc399476954
