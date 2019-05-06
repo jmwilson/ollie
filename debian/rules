@@ -7,5 +7,9 @@ export PYBUILD_NAME=ollie
 	dh $@ --with python3,systemd --buildsystem=pybuild
 
 override_dh_auto_test:
+	# "--test-args ollie.tests" will start unittest discovery in ollie/tests
+	pybuild --test --test-args ollie.tests
+
 override_dh_installinit:
+	# Avoid lintian warnings since this uses systemd only; see dh_installinit(1)
 	:
