@@ -91,6 +91,14 @@ def on_message(client, userdata, msg):
             scope.onDecreaseVerticalScale(client, device, payload)
         if topic == "hermes/intent/jmwilson:forceTrigger":
             scope.onForceTrigger(client, device, payload)
+        if topic == "hermes/intent/jmwilson:setTriggerLevel":
+            scope.onSetTriggerLevel(client, device, payload)
+        if topic == "hermes/intent/jmwilson:autoTriggerLevels":
+            scope.onAutoTriggerLevels(client, device, payload)
+        if topic == "hermes/intent/jmwilson:setTriggerCoupling":
+            scope.onSetTriggerCoupling(client, device, payload)
+        if topic == "hermes/intent/jmwilson:setTriggerHoldoff":
+            scope.onSetTriggerHoldoff(client, device, payload)
     except Exception:
         print(traceback.format_exc(), file=sys.stderr)
         raise  # note: paho-mqtt ignores all exceptions

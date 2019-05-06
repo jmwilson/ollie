@@ -458,3 +458,68 @@ def onForceTrigger(client, device, payload):
     Slots: none
     """
     print(":TRIGGER:FORCE", file=device)
+
+
+def onSetTriggerLevel(client, device, payload):
+    """
+    Snips intent name: setTriggerLevel
+
+    Slots:
+    source: custom/Trigger source
+    level: snips/number
+    units: custom/Vertical units
+    """
+    source, level, exp = None, None, None
+    for slot in payload['slots']:
+        if slot['slotName'] == "source":
+            source = trigger_sources[slot['value']['value']]
+        if slot['slotName'] == "level":
+            level = float(slot['value']['value'])
+        if slot['slotName'] == "units":
+            _, exp = vertical_units[slot['value']['value']]
+    if level is None:
+        raise RuntimeError("Expected slot level in intent setTriggerLevel")
+    if exp is not None:
+        level *= exp
+    if source is None:
+        print(f":TRIGGER:LEVEL {level:G}", file=device)
+    else:
+        print(f":TRIGGER:LEVEL {level:G},{source}", file=device)
+
+
+def onAutoTriggerLevels(client, device, payload):
+    """
+    Snips intent name: autoTriggerLevels
+
+    Slots: none
+    """
+    print(":TRIGGER:ASETUP", file=device)
+
+
+def onSetTriggerCoupling(client, device, payload):
+    """
+    Snips intent name: setTriggerCoupling
+
+    Slots:
+    coupling: custom/coupling
+    """
+    expectSlots(payload, 1)
+    coupling = payload['slots'][0]['value']['value']
+    print(f":TRIGGER:COUPLING {coupling}", file=device)
+
+
+def onSetTriggerHoldoff(client, device, payload):
+    """
+    Snips intent name: setTriggerHoldoff
+
+    Slots:
+    holdoff: snips/number
+    units: custom/Time units
+    """
+    expectSlots(payload, 2)
+    for slot in payload['slots']:
+        if slot['slotName'] == "holdoff":
+            holdoff = int(slot['value']['value'])
+        if slot['slotName'] == "units":
+            exp = time_units[slot['value']['value']]
+    print(f":TRIGGER:HOLDOFF {holdoff * exp:G}", file=device)

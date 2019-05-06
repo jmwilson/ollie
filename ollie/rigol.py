@@ -351,7 +351,7 @@ def onSaveImage(client, device, payload):
     Slots: none
     """
     # There's no command to save image data to USB storage.
-    pass
+    raise RuntimeError("Operation not supported on Rigol")
 
 
 def onSetProbeCoupling(client, device, payload):
@@ -473,3 +473,65 @@ def onForceTrigger(client, device, payload):
     Slots: none
     """
     print(":TFORCE", file=device)
+
+
+def onSetTriggerLevel(client, device, payload):
+    """
+    Snips intent name: setTriggerLevel
+
+    Slots:
+    source: custom/Trigger source
+    level: snips/number
+    units: custom/Vertical units
+    """
+    level, exp = None, None
+    for slot in payload['slots']:
+        if slot['slotName'] == "source":
+            raise RuntimeError("Operation not supported on Rigol")
+        if slot['slotName'] == "level":
+            level = float(slot['value']['value'])
+        if slot['slotName'] == "units":
+            _, exp = vertical_units[slot['value']['value']]
+    if level is None:
+        raise RuntimeError("Expected slot level in intent setTriggerLevel")
+    if exp is not None:
+        level *= exp
+    print(f":TRIGGER:EDGE:LEVEL {level:G}", file=device)
+
+
+def onAutoTriggerLevels(client, device, payload):
+    """
+    Snips intent name: autoTriggerLevels
+
+    Slots: none
+    """
+    raise RuntimeError("Operation not supported on Rigol")
+
+
+def onSetTriggerCoupling(client, device, payload):
+    """
+    Snips intent name: setTriggerCoupling
+
+    Slots:
+    coupling: custom/coupling
+    """
+    expectSlots(payload, 1)
+    coupling = payload['slots'][0]['value']['value']
+    print(f":TRIGGER:COUPLING {coupling}", file=device)
+
+
+def onSetTriggerHoldoff(client, device, payload):
+    """
+    Snips intent name: setTriggerHoldoff
+
+    Slots:
+    holdoff: snips/number
+    units: custom/Time units
+    """
+    expectSlots(payload, 2)
+    for slot in payload['slots']:
+        if slot['slotName'] == "holdoff":
+            holdoff = int(slot['value']['value'])
+        if slot['slotName'] == "units":
+            exp = time_units[slot['value']['value']]
+    print(f":TRIGGER:HOLDOFF {holdoff * exp:G}", file=device)

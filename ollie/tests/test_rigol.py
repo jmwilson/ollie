@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import unittest
 import unittest.mock
 
-import rigol
+from .. import rigol
 
 class RigolTest(unittest.TestCase):
     def setUp(self):
@@ -158,6 +158,10 @@ class RigolTest(unittest.TestCase):
         rigol.onSetTriggerSource(self.client, self.device, payload)
         self.device.write.assert_any_call(":TRIGGER:EDGE:SOURCE CHANNEL1")
 
+    def testSaveImage(self):
+        with self.assertRaises(RuntimeError):
+            rigol.onSaveImage(self.client, self.device, self.makeSnipsPayload())
+
     def testSetProbeCoupling(self):
         with self.assertRaises(RuntimeError):
             rigol.onSetProbeCoupling(self.client, self.device, self.makeSnipsPayload())
@@ -217,3 +221,52 @@ class RigolTest(unittest.TestCase):
         rigol.onForceTrigger(self.client, self.device, self.makeSnipsPayload())
         self.client.assert_not_called()
         self.device.write.assert_any_call(":TFORCE")
+
+    def testSetTriggerLevel(self):
+        with self.assertRaises(RuntimeError):
+            rigol.onSetTriggerLevel(self.client, self.device, self.makeSnipsPayload())
+        with self.assertRaises(RuntimeError):
+            payload = self.makeSnipsPayload(units="volts")
+            rigol.onSetTriggerLevel(self.client, self.device, payload)
+
+        payload = self.makeSnipsPayload(level=5)
+        rigol.onSetTriggerLevel(self.client, self.device, payload)
+
+        payload = self.makeSnipsPayload(level=100, units="millivolts")
+        rigol.onSetTriggerLevel(self.client, self.device, payload)
+
+        with self.assertRaises(RuntimeError):
+            payload = self.makeSnipsPayload(level=5, units="amps", source="channel three")
+            rigol.onSetTriggerLevel(self.client, self.device, payload)
+
+        self.device.assert_has_calls([
+            unittest.mock.call.write(":TRIGGER:EDGE:LEVEL 5"),
+            unittest.mock.call.write("\n"),
+            unittest.mock.call.write(":TRIGGER:EDGE:LEVEL 0.1"),
+            unittest.mock.call.write("\n"),
+        ])
+
+    def testAutoTriggerLevels(self):
+        with self.assertRaises(RuntimeError):
+          rigol.onAutoTriggerLevels(self.client, self.device, self.makeSnipsPayload())
+
+    def testSetTriggerCoupling(self):
+        with self.assertRaises(RuntimeError):
+            rigol.onSetTriggerCoupling(self.client, self.device, self.makeSnipsPayload())
+        payload = self.makeSnipsPayload(coupling="AC")
+        rigol.onSetTriggerCoupling(self.client, self.device, payload)
+        payload = self.makeSnipsPayload(coupling="DC")
+        rigol.onSetTriggerCoupling(self.client, self.device, payload)
+        self.device.assert_has_calls([
+            unittest.mock.call.write(":TRIGGER:COUPLING AC"),
+            unittest.mock.call.write("\n"),
+            unittest.mock.call.write(":TRIGGER:COUPLING DC"),
+            unittest.mock.call.write("\n"),
+        ])
+
+    def testSetTriggerHoldoff(self):
+        with self.assertRaises(RuntimeError):
+            rigol.onSetTriggerHoldoff(self.client, self.device, self.makeSnipsPayload())
+        payload = self.makeSnipsPayload(holdoff="100", units="nanoseconds")
+        rigol.onSetTriggerHoldoff(self.client, self.device, payload)
+        self.device.write.assert_any_call(":TRIGGER:HOLDOFF 1E-07")

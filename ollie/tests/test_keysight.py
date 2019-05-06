@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import unittest
 import unittest.mock
 
-import keysight
+from .. import keysight
 
 class KeysightTest(unittest.TestCase):
     def setUp(self):
@@ -225,3 +225,57 @@ class KeysightTest(unittest.TestCase):
         keysight.onForceTrigger(self.client, self.device, self.makeSnipsPayload())
         self.client.assert_not_called()
         self.device.write.assert_any_call(":TRIGGER:FORCE")
+
+    def testSetTriggerLevel(self):
+        with self.assertRaises(RuntimeError):
+            keysight.onSetTriggerLevel(self.client, self.device, self.makeSnipsPayload())
+        with self.assertRaises(RuntimeError):
+            payload = self.makeSnipsPayload(source="channel one")
+            keysight.onSetTriggerLevel(self.client, self.device, payload)
+
+        payload = self.makeSnipsPayload(level=5)
+        keysight.onSetTriggerLevel(self.client, self.device, payload)
+
+        payload = self.makeSnipsPayload(level=100, units="millivolts")
+        keysight.onSetTriggerLevel(self.client, self.device, payload)
+
+        payload = self.makeSnipsPayload(level=5, units="amps", source="channel three")
+        keysight.onSetTriggerLevel(self.client, self.device, payload)
+
+        self.client.assert_not_called()
+        self.device.assert_has_calls([
+            unittest.mock.call.write(":TRIGGER:LEVEL 5"),
+            unittest.mock.call.write("\n"),
+            unittest.mock.call.write(":TRIGGER:LEVEL 0.1"),
+            unittest.mock.call.write("\n"),
+            unittest.mock.call.write(":TRIGGER:LEVEL 5,CHANNEL3"),
+            unittest.mock.call.write("\n"),
+        ])
+
+    def testAutoTriggerLevels(self):
+        keysight.onAutoTriggerLevels(self.client, self.device, self.makeSnipsPayload())
+        self.client.assert_not_called()
+        self.device.write.assert_any_call(":TRIGGER:ASETUP")
+
+    def testSetTriggerCoupling(self):
+        with self.assertRaises(RuntimeError):
+            keysight.onSetTriggerCoupling(self.client, self.device, self.makeSnipsPayload())
+        payload = self.makeSnipsPayload(coupling="AC")
+        keysight.onSetTriggerCoupling(self.client, self.device, payload)
+        payload = self.makeSnipsPayload(coupling="DC")
+        keysight.onSetTriggerCoupling(self.client, self.device, payload)
+        self.client.assert_not_called()
+        self.device.asssert_has_calls([
+            unittest.mock.call.write(":TRIGGER:COUPLING AC"),
+            unittest.mock.call.write("\n"),
+            unittest.mock.call.write(":TRIGGER:COUPLING DC"),
+            unittest.mock.call.write("\n"),
+        ])
+
+    def testSetTriggerHoldoff(self):
+        with self.assertRaises(RuntimeError):
+            keysight.onSetTriggerHoldoff(self.client, self.device, self.makeSnipsPayload())
+        payload = self.makeSnipsPayload(holdoff="100", units="nanoseconds")
+        keysight.onSetTriggerHoldoff(self.client, self.device, payload)
+        self.client.assert_not_called()
+        self.device.write.assert_any_call(":TRIGGER:HOLDOFF 1E-07")
