@@ -100,6 +100,8 @@ def on_message(client, userdata, msg):
             scope.onSetTriggerCoupling(client, device, payload)
         if topic == "hermes/intent/jmwilson:setTriggerHoldoff":
             scope.onSetTriggerHoldoff(client, device, payload)
+        if topic == "hermes/intent/jmwilson:setTriggerSweepMode":
+            scope.onSetTriggerSweepMode(client, device, payload)
     except Exception:
         print(traceback.format_exc(), file=sys.stderr)
         raise  # note: paho-mqtt ignores all exceptions

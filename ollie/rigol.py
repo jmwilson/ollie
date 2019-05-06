@@ -541,3 +541,15 @@ def onSetTriggerHoldoff(client, device, payload):
             exp = time_units[slot['value']['value']]
     print(":TRIGGER:HOLDOFF {holdoff:G}".format(
         holdoff=holdoff * exp), file=device)
+
+
+def onSetTriggerSweepMode(client, device, payload):
+    """
+    Snips intent name: setTriggerSweepMode
+
+    Slots:
+    mode: snips/default
+    """
+    expectSlots(payload, 1)
+    mode = payload['slots'][0]['value']['value'].upper()
+    print(":TRIGGER:SWEEP {mode}".format(mode=mode), file=device)

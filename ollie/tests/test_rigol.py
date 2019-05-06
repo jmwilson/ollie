@@ -270,3 +270,18 @@ class RigolTest(unittest.TestCase):
         payload = self.makeSnipsPayload(holdoff="100", units="nanoseconds")
         rigol.onSetTriggerHoldoff(self.client, self.device, payload)
         self.device.write.assert_any_call(":TRIGGER:HOLDOFF 1E-07")
+
+    def testSetTriggerSweepMode(self):
+        with self.assertRaises(RuntimeError):
+            rigol.onSetTriggerSweepMode(self.client, self.device, self.makeSnipsPayload())
+        payload = self.makeSnipsPayload(mode="normal")
+        rigol.onSetTriggerSweepMode(self.client, self.device, payload)
+        payload = self.makeSnipsPayload(mode="auto")
+        rigol.onSetTriggerSweepMode(self.client, self.device, payload)
+        self.client.assert_not_called()
+        self.device.assert_has_calls([
+            unittest.mock.call.write(":TRIGGER:SWEEP NORMAL"),
+            unittest.mock.call.write("\n"),
+            unittest.mock.call.write(":TRIGGER:SWEEP AUTO"),
+            unittest.mock.call.write("\n"),
+        ])

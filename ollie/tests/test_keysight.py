@@ -279,3 +279,18 @@ class KeysightTest(unittest.TestCase):
         keysight.onSetTriggerHoldoff(self.client, self.device, payload)
         self.client.assert_not_called()
         self.device.write.assert_any_call(":TRIGGER:HOLDOFF 1E-07")
+
+    def testSetTriggerSweepMode(self):
+        with self.assertRaises(RuntimeError):
+            keysight.onSetTriggerSweepMode(self.client, self.device, self.makeSnipsPayload())
+        payload = self.makeSnipsPayload(mode="normal")
+        keysight.onSetTriggerSweepMode(self.client, self.device, payload)
+        payload = self.makeSnipsPayload(mode="auto")
+        keysight.onSetTriggerSweepMode(self.client, self.device, payload)
+        self.client.assert_not_called()
+        self.device.assert_has_calls([
+            unittest.mock.call.write(":TRIGGER:SWEEP NORMAL"),
+            unittest.mock.call.write("\n"),
+            unittest.mock.call.write(":TRIGGER:SWEEP AUTO"),
+            unittest.mock.call.write("\n"),
+        ])
