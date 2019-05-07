@@ -42,7 +42,24 @@ Using your voice, you can control the oscilloscope to do:
     - "trigger on digital zero"
     - "trigger on the rising edge"
     - "set trigger slope to negative"
-- save screen captures to a USB drive (only on Keysight): "take a screen shot"
+- set trigger value:
+    - "set trigger value to minus 150 millivolts"
+    - "set trigger value on channel 3 to 5 volts" (changing trigger on a different channel only supported on Keysight)
+- auto set trigger voltages (only on Keysight):
+    - "auto set trigger values"
+    - "reset trigger values"
+- set trigger coupling:
+    - "set trigger coupling to AC"
+    - "make the trigger DC coupled"
+- set trigger holdoff:
+    - "set trigger holdoff to 100 nanoseconds"
+- set trigger sweep mode:
+    - "set trigger mode to normal"
+    - "set sweep mode to auto"
+- force trigger and acquisition:
+    - "force trigger"
+- save screen captures to a USB drive (only on Keysight):
+    - "take a screen shot"
 - change probe attenuation ratio and coupling
     - "set probe one ratio to 100"
     - "set probe two coupling to AC"
@@ -58,7 +75,7 @@ Things you'll need:
 
 Ready-to-use images are available for the Raspberry Pi. These images include a base Raspbian lite installation, with all drivers, Snips, and the Ollie assistant installed. The image is generated using a fork of pi-gen (https://github.com/jmwilson/pi-gen-ollie).
 
-[Download the latest image](https://ollie-dist.s3.amazonaws.com/image_2019-04-06-Ollie.zip) (SHA-256: `27ba75cd6b9007963c04ffb249f69ce4a61a71143277f3e2a7682c6fd051d1f2`)
+[Download the latest image](https://ollie-dist.s3.amazonaws.com/image_2019-05-06-Ollie.zip) (SHA-256: `16aa3c44d50c8abc2ad40437bb8c54063c602c7a572ad03d56cdcefd26de121b`)
 
 [Instructions for flashing a Raspbian image](https://www.raspberrypi.org/documentation/installation/installing-images/)
 
@@ -70,7 +87,7 @@ Manual installation steps:
 1. Install Raspbian lite
 2. Install Seeedstudio drivers for the Respeaker 2: http://wiki.seeedstudio.com/ReSpeaker_2_Mics_Pi_HAT/
 3. Install Snips for Raspberry Pi: https://docs.snips.ai/articles/raspberrypi/manual-setup
-4. Create an assistant on the Snips console that uses the Oscilloscope control app: https://console.snips.ai/store/en/skill_E3eq8QB0Ae. Train the assistant and download the .zip image, and expand it under `/usr/share/snips`. 
+4. Create an assistant on the Snips console that uses the Oscilloscope control app: https://console.snips.ai/store/en/skill_E3eq8QB0Ae. Train the assistant and download the .zip image, and expand it under `/usr/share/snips`.
 5. Install the ollie code on the Raspberry Pi, and run using `python <path-to-ollie>`
 
 Video demo:
