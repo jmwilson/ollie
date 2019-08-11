@@ -69,13 +69,15 @@ ollie uses natural language understanding and has been trained to be flexible in
 ## Getting started
 
 Things you'll need:
-- Raspberry Pi model 3A+ or 3B+
+- Raspberry Pi model 3A+ or 3B+, 4B support with preview release (see below)
 - Respeaker 2 Pi Hat
 - microSD card (4 GB or larger)
 
 Ready-to-use images are available for the Raspberry Pi. These images include a base Raspbian lite installation, with all drivers, Snips, and the Ollie assistant installed. The image is generated using a fork of pi-gen (https://github.com/jmwilson/pi-gen-ollie).
 
 [Download the latest image](https://ollie-dist.s3.amazonaws.com/image_2019-05-06-Ollie.zip) (SHA-256: `16aa3c44d50c8abc2ad40437bb8c54063c602c7a572ad03d56cdcefd26de121b`)
+
+[Preview release](https://ollie-dist.s3.amazonaws.com/image_2019-08-11-Ollie.zip) (SHA-256: `2a364e4d56af7c0941d242713c1a529345f9b50ddaeb416211d6d6ea2d2de037`). This image has been built on Debian 10 ("buster") with support for the Pi 4. As Snips support for buster is still in progress, this is a preview release that will see updates.
 
 [Instructions for flashing a Raspbian image](https://www.raspberrypi.org/documentation/installation/installing-images/)
 
