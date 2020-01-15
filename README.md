@@ -3,6 +3,8 @@ Voice control for oscilloscopes using Snips
 
 Ollie is a voice control assistant for digital oscilloscopes. Frequently I would be probing a board with both hands and wished I could speak to the scope to pause the capture. Keysight does offer voice control for its oscilloscopes — starting on the 6000-X series. For those of us on a more modest budget, a Raspberry Pi and the [Snips](https://snips.ai) platform can be an excellent substitute.
 
+*(January 2020) Following the acquisition of Snips and shuttering of public access to its technology, Ollie is on hiatus until a substitute voice platform is found. Snips functions completely on-device, so the installer images below and existing Ollie instances will continue to work indefinitely.*
+
 Supported oscilloscopes:
 
 - Keysight MSO-X and DSO-X 1000-6000 series
